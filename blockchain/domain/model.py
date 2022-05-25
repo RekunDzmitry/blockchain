@@ -6,19 +6,20 @@ class User:
     pass
 
 class Transaction:
-    def __init__(self, sender:User, recipient:User, amount:int):
+    def __init__(self, id:str, sender:User, recipient:User, amount:int):
+        self.id = id
         self.sender = sender
         self.recipient = recipient
         self.amount = amount
 
 class Block:
     def __init__(
-        self, index:int, timestamp:float, transactions: List[Transaction], 
+        self, id:str, index:int, timestamp:float, transactions: List[Transaction], 
         proof:int, previous_hash: str
     ):
         self.index = index
         self.timestamp = timestamp
-        self.transactions =transactions
+        self.transactions = transactions
         self.proof = proof
         self.previous_hash = previous_hash
 

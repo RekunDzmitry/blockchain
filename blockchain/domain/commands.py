@@ -6,7 +6,7 @@ class Command:
     pass
 
 @dataclass
-class InstantiateBlock(Command):
+class CreateBlock(Command):
     previous_block:Block
 
 @dataclass

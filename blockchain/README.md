@@ -22,6 +22,7 @@ ToDO list:
                                     __init__.py
                                     orm.py
                                     repository.py
+                                bootstrap.py
                                 config.py
                                 domain
                                     __init__.py
@@ -47,5 +48,9 @@ ToDO list:
 
 3. Write down the tests
 4. Create flask endpoints
-5. Dockerize
+5. Create a bootstrap file
+6. Add orm
+
+15. Add methods to non-model classes
+16. Dockerize
 
