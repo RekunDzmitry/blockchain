@@ -19,12 +19,12 @@ class Block:
     ):
         self.index = index
         self.timestamp = timestamp
-        self.transactions = transactions
+        self._transactions = transactions
         self.proof = proof
         self.previous_hash = previous_hash
 
     def add_transaction(self, transaction:Transaction) -> None:
-        self.transactions.append(transaction)
+        self._transactions.append(transaction)
 
     @property
     def hash(self) -> str:
@@ -51,11 +51,11 @@ class Miner:
 
 class Chain:
     def __init__(self, blocks:List[Block]):
-        self.blocks =blocks
+        self._blocks =blocks
 
     def add_block(self, block:Block):
-        self.blocks.append(block)
+        self._blocks.append(block)
 
     @property
     def last_block(self) -> Block:
-        return self.blocks[-1]
+        return self._blocks[-1]
