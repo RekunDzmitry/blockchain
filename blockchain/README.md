@@ -50,6 +50,8 @@ ToDO list:
 4. Create flask endpoints
 5. Create a bootstrap file
 6. Add orm
+7. Add handlers
+8. 
 
 15. Add methods to non-model classes
 16. Dockerize

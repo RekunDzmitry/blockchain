@@ -1,7 +1,7 @@
 import inspect
 
 from blockchain.adapters import orm
-
+from blockchain.service_layer import handlers
 
 def bootstrap(
     start_orm: bool = True,

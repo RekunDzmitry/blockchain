@@ -6,6 +6,11 @@ class Event:
 
 
 @dataclass
-class TransactionStarted(Event):
+class TransactionAdded(Event):
+    transaction: Transaction
+
+
+@dataclass
+class TransactionAborted(Event):
     transaction: Transaction
 
