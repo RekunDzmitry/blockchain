@@ -8,7 +8,7 @@ from . import unit_of_work
 def validate_transaction():
     pass
 
-def add_transaction(
+def create_transaction(
     cmd: commands.AddTransaction,
     uow: unit_of_work.AbstractUnitOfWork,
 ):
@@ -21,14 +21,21 @@ def add_transaction(
             uow.transactions.add(transaction)
         uow.commit()
 
+def update_chain():
+    pass
+
 
 EVENT_HANDLERS = {
-    events.TransactionValid: [add_transaction],
-    events.OutOfStock: [send_out_of_stock_notification],
+    events.BlockMined: [add_reward_transaction, add_block],
+    events.TransactionCreated: [add_transaction],
+    events.NodeRegistered: [add_node],
+    events.ChainRejected:[replace_chain],
+    events.ChainRApproved:[approve_chain]
 }  # type: Dict[Type[events.Event], List[Callable]]
 
 COMMAND_HANDLERS = {
-    commands.ValidateTransaction: validate_transaction,
-    commands.CreateBatch: add_batch,
-    commands.ChangeBatchQuantity: change_batch_quantity,
+    commands.Mine: find_proof,
+    commands.NewTransaction: create_transaction,
+    commands.RegisterNode: register_node,
+    commands.RegisterNode: resolve_conflicts,
 }  # type: Dict[Type[commands.Command], Callable]

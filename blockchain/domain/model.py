@@ -31,10 +31,31 @@ class Block:
         block_string = json.dumps(self.__dict__, sort_keys=True).encode()
         return hashlib.sha256(block_string).hexdigest()
 
+class Chain:
+    def __init__(self, blocks:List[Block]):
+        self._blocks = blocks
 
-class Miner:
-    def __init__(self, last_proof:int):
+    def add_block(self, block:Block):
+        self._blocks.append(block)
+
+    @property
+    def last_block(self) -> Block:
+        return self._blocks[-1]
+
+
+class Blockchain:
+    def __init__(self, chain: Chain , last_proof:int):
         self.last_proof = last_proof
+
+    def proof_of_work(self, last_block):
+        last_proof = last_block['proof']
+        last_hash = self.hash(last_block)
+
+        proof = 0
+        while self.valid_proof(last_proof, proof, last_hash) is False:
+            proof += 1
+
+        return 
 
     def find_proof(self) -> int:
         proof = 0
@@ -48,14 +69,5 @@ class Miner:
         guess_hash = hashlib.sha256(guess).hexdigest()
         return guess_hash[:4] == "0000" 
 
-
-class Chain:
-    def __init__(self, blocks:List[Block]):
-        self._blocks =blocks
-
-    def add_block(self, block:Block):
-        self._blocks.append(block)
-
-    @property
-    def last_block(self) -> Block:
-        return self._blocks[-1]
+    def valid_chain():
+        pass

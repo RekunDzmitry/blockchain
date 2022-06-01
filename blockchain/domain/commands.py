@@ -6,10 +6,22 @@ class Command:
     pass
 
 @dataclass
-class CreateBlock(Command):
+class CreateGenesisBlock(Command):
     previous_block:Block
 
 @dataclass
-class StartTransaction(Command):
+class AddBlock(Command):
+    previous_block:Block
+
+@dataclass
+class RegisterNode(Command):
+    previous_block:Block
+
+@dataclass
+class NewTransaction(Command):
+    previous_block:Block
+
+@dataclass
+class Mine(Command):
     previous_block:Block
 
