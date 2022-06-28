@@ -1,31 +1,95 @@
-from blockchain.domain.model import User, Block, Transaction, Miner, Chain
 import time
+import pytest
 
-def test_block_adds_transaction():
-    block = Block(
-        index = 1, timestamp = time.time(), transactions = [], 
-        proof = 1, previous_hash = 'aaa'
-    )
+from blockchain.domain.model import (
+    MasterNode, 
+    Node, 
+    Transaction, 
+    User, 
+    Chain, 
+    Block
+)
 
-    block.add_transaction(Transaction(User(),User(),1))
 
-    assert len(block.transactions) == 1
+class TestModel:
+    @pytest.fixture(scope = 'function', autouse =True)
+    def setup_data(self):
+        self.user1 = User(name = 'Test User 1', balance = 100, id = 'aaa')
+        self.user2 = User(name = 'Test User 2', balance = 100, id = 'bbb')
 
-def test_chain_adds_block():
-    chain = Chain(blocks = [])
+        self.transaction1 = Transaction(
+            sender = self.user1, 
+            recipient = self.user2, 
+            amount = 50
+        )
+        self.transaction2 = Transaction(
+            sender = self.user2, 
+            recipient = self.user1, 
+            amount = 50
+        )
+
+        self.block1 = Block(
+            hash = 'aaa', 
+            previous_hash = 'aa', 
+            transactions = [self.transaction1]
+        )
+        self.block2 = Block(
+            hash = 'aaa', 
+            previous_hash = 'aa', 
+            transactions = [self.transaction2]
+        )
+
+        self.chain1 = Chain(blocks = [self.block1, self.block2])
+        self.chain2 = Chain(blocks = [self.block1, self.block2])
+        self.chain3 = Chain(blocks = [self.block1])
+
+        self.node1 = Node(id = 'node1', chain = self.chain1)
+        self.node2 = Node(id = 'node2', chain = self.chain2)
+        self.node3 = Node(id = 'node3', chain = self.chain3)
+
+        self.master = MasterNode(
+            users = [self.user1, self.user2], 
+            nodes = [self.node1, self.node2, self.node3]
+        )
     
-    block = Block(
-        index = 1, timestamp = time.time(), transactions = [], 
-        proof = 1, previous_hash = 'aaa'
-    )
+    def test_register_node_empty_history(self):
+        node = Node()
+        
+        self.master.register_node(node)
 
-    chain.add_block(block)
+        assert len(self.master.nodes) == 4
+        for node in self.master.nodes:
+            node.chain.blocks == [self.block1, self.block2]
 
-    assert len(chain.blocks) == 1
-    assert chain.last_block.index == 1
+    def test_register_node_reset_history(self):
+        node = Node(id = 'node3', chain = Chain(blocks = [self.block2, self.block1]))
+        
+        self.master.register_node(node)
 
-def test_miner_finds_valid_proof():
-    miner = Miner(1)
-    proof = miner.find_proof()
+        assert len(self.master.nodes) == 4
+        for node in self.master.nodes:
+            node.chain.blocks == [self.block1, self.block2]
 
-    assert miner.valid_proof(proof) == True
+    def test_normal_transaction(self):
+        transaction = Transaction(sender = self.user1, recipient = self.user2, amount = 10)
+
+        self.master.transfere(transaction)
+        
+        assert self.user1.balance == 90
+        assert self.user1.balance == 110
+
+    def test_unexisted_user_transaction(self):
+        fake_user = User(name = 'Fake User', balance = 1000, id = 'aaaa')
+        transaction = Transaction(sender = self.user1, recipient = fake_user, amount = 10)
+
+        assert self.user1.balance == 100
+        assert self.user1.balance == 100
+
+    def test_negative_balance_transaction(self):
+        transaction = Transaction(sender = self.user1, recipient = self.user2, amount = 1000)
+
+        self.master.transfere(transaction)
+        
+        assert self.user1.balance == 100
+        assert self.user1.balance == 100
+
